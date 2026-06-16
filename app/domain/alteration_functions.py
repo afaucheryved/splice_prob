@@ -59,7 +59,7 @@ class PatternAlterartionFonctions:
         cut (or copy) and past en sequence
         """
 
-class FullAlterationFonctions :
+class FullAlterationFonctions:
 
     """
     alteration on the entire sequence
@@ -71,7 +71,7 @@ class FullAlterationFonctions :
         """
         return
 
-class NewSequenceFonctions :
+class NewSequenceFonctions:
 
     """
     creating a sequence from scratch
@@ -90,7 +90,7 @@ class NewSequenceFonctions :
         """
         return
 
-class RandomAlterationFonctions :
+class RandomAlterationFonctions:
     """
     returns randomly mutated atgc sequences following user-defined probability distributions,
     via other functions of the 'ProbaLaws' class.
