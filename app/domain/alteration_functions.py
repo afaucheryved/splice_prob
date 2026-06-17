@@ -6,27 +6,27 @@ from app.schemas.typing import *
 from app.domain.proba_laws_functions import ProbaLawsFunctions
 from app.domain.genomic_calculation import tuple_mutation
 
-class AlterartionFunctionsByIndex:
+class AlterationFunctionsByIndex:
 
     """
-    This class of functions is about to work on patterns' atcg sequence.
+    This class provides functions that operate on ATCG sequences by index.
     They return the new sequence.
     """
 
     def place_pattern(sequence: genome, 
                             pattern :str, 
                             index :int,
-                            lenght : str | int=0 )-> genome:
+                            length : str | int = 0 )-> genome:
         """
-        Place an actg pattern at an index a over a specified length of the sequence (instead of another one if lenght != 0).
+        Place an ATCG pattern at an index over a specified length of the sequence (replacing the existing bases if length != 0).
         If length = ":", then the length is the distance from the index to the end of the sequence. 
         Example:
-                pattern = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", lenght = 16
+                pattern = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", length = 16
 
-                                    PLACE (instead of)
+                                    PLACE (replacing)
             -> ...atcgatcgatcgatcgatcgatcgatcgatcgatcgatcgatcgatcgatcgatcgatcg...
                                     |----------------|
-                                   index    (lenght) |_____
+                                   index    (length) |_____
                                     |                      |_____
                                     |                            |____
                                     |aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa |
@@ -35,55 +35,55 @@ class AlterartionFunctionsByIndex:
     
     def delete_pattern(sequence: genome, 
                        start : int, 
-                       end : int | None=None,
-                       lenght: int | str | None=None)-> genome:
+                       end : int | None = None,
+                       length: int | str | None = None)-> genome:
         """
-        Delet the bases beteen the position 'start' and 'end'.
-        You can use 'lenght' parametter instead of 'end'.
+        DELETEEe the bases beteen the position 'start' and 'end'.
+        You can use 'length' parameter instead of 'end'.
         If length = ":", then the length is the distance from the index to the end of the sequence.
         Example:
                         
-                                        DELETED
+                                        DELETEEeED
             -> ...atcgatcgatcgatcgatcgatcgatcgatcgatcgatcgatcgatcgatcgatcgatcg...
                                     |----------------|
-                                   start  (lenght)  end
+                                   start  (length)  end
         """
         return
 
-    def cc_past(sequence: genome,
+    def copy_cut_paste(sequence: genome,
                      start_cc: int,
                      end_cc: int,
-                     index_past: int,
-                     lenght_past: int=0,
-                     mode: str="cut")-> genome:
+                     index_paste: int,
+                     length_paste: int = 0,
+                     mode: str = "cut")-> genome:
         """
-        Cut (or copy) and past a sequence.
+        Cut (or copy) and paste a sequence.
         Example:
                         
-                      COPY / CUT                                PAST
+                      COPY / CUT                                PASTE
             -> ...atcgatcgatcgatcgatcgatcgatcgatcgatcgatcgatcgatcgatcgatcgatcg...
                     |-----------|                      |---------------------|
-                 start_cc     end_cc               index_past   (lenght_past)                                                  
+                 start_cc     end_cc               index_paste   (length_past)                                                  
                         
 
         """
         return
 
-class AlterartionFunctionsByPattern:
+class AlterationFunctionsByPattern:
 
     """
-    This class of functions is about to work on patterns' atcg sequence.
+    This class provides functions that operate on ATCG sequences.
     The entire input sequence is processed by the functions.
     They return the new sequence.
     """
 
     def replace_pattern(sequence: genome, 
-                            olde: str, 
-                            new:str, )-> genome:
+                            old: str, 
+                            new: str)-> genome:
         """
-        Replace a pattern of bases by another one
-        ! -> "_" is a wildcard character (replaces 1 atcg base).
-        ! -> "%(n)" is a wildcard character (replaces any long sequence of up to 'n' ATCG bases).
+        Replace one nucleotide pattern with another.
+        ! -> "_" is a wildcard character (matches exactly one ATCG base).
+        ! -> "%(n)" is a wildcard character (matches any sequence of up to 'n' ATCG bases).
         Example:
 
             old = "cc_c", new = "aaaa"
@@ -101,41 +101,41 @@ class AlterartionFunctionsByPattern:
                        )-> genome:
         """
         ! -> "_" is a wildcard character (replaces 1 atcg base).
-        ! -> "%(n)" is a wildcard character (replaces any long sequence of up to 'n' ATCG bases).
+        ! -> "%(n)" is a wildcard character (matches any sequence of up to 'n' ATCG bases).
         Example:
 
             pattern = "cc_c"
-                               DELETE                      DELET
+                               DELETEEeE                      DELETEEe
             -> ...atcgatcgatcgatccccgatcgatcgatcgatcgatcgatcctcgatcgatcgatcgatcgatcg...
                                 |--|                       |--|
-                                aaaa                       aaaa
+                                                     
                                 
 
         """
         return
 
-class NewSequenceFunctions:
+class SequenceFactory:
 
     """
-    Generating a sequence.
+    Functions for generating sequences.
     """
     def repeat(pattern: str, nbr: int, 
                 start_pattern: str="", 
                 end_pattern: str="")-> genome:
         """
-        Repeats a pattern a number of times, with a non-recursive pattern at the beginning and end.
+        Repeat a pattern a specified number of times, with optional prefixes and suffixes.
         Example:
 
-            pattern = "atcg", nbr = 10, start_pattern = "aaaa", end_attern = "cccc"
+            pattern = "atcg", nbr = 10, start_pattern = "aaaa", end_pattern = "cccc"
             
             --> aaaaatcgatcgatcgatcgatcgatcgatcgatcgatcgatcgcccc
-            <start> |              <lopp>                   | <end>
+            <start> |              <loop>                   | <end>
         """
         return
     
-    def merge(sequenses :list[genome])-> genome:
+    def merge(sequences: list[genome])-> genome:
         """
-        Return merged sequences.
+        Return the merged sequence.
 
         Example:
 
@@ -145,32 +145,32 @@ class NewSequenceFunctions:
         """
         return
 
-class RandomAlterationFonctions:
+class RandomAlterationFunctions:
     """
-    Returns randomly mutated atgc sequences following user-defined probability distributions,
-    via other functions of the 'ProbaLaws' class.
+    Returns randomly mutated ATCG sequences following user-defined probability distributions,
+    using probability distributions defined by the ProbaLawsFunctions class.
     """
 
     def base_by_base(sequence: genome, 
                      prob_mat: MutationMatrix
                    )-> genome:
         """
-        applies a probability law to each basis, which causes it to mutate or not depending on the probability matrix
+        Apply the mutation probability matrix independently to each base.
 
         Example:
 
-            If proba_mat[0][1] = 0.01, so a "a" have 1% chance to become a "c"
+            If prob_mat[0][1] = 0.01, then an "A" has a 1% chance of becoming a "C".
         """
         return 
 
-class PermutationFunctions:
+class WindowMutationFunctions:
 
     def enumerate_window_mutants(sequence: genome, 
                       start: int, end: int, step: int,
-                      window: int=3, 
-                      only_different_bases: bool=True)-> dict[tuple[mut, ...], genome]:
+                      window: int = 3, 
+                      only_different_bases: bool = True)-> dict[tuple[mut, ...], genome]:
         """
-        Returns the dictionary of versions of the sequence, each containing a window mutant: 
+        Returns the dictionary of versions of the sequence
         1: of a specific window position; 
         2: of a version of a possible window mutant of that window.
 
@@ -183,15 +183,15 @@ class PermutationFunctions:
                 so the windows positions [] are, between 'start' and 'end' :
                         ...[atcg][atcg][atcg][atcg]...
 
-                and for each  window, the possibles window mutant are [gcta], [cctc], etc... without a base in the same location as the original sequence (only_different_bases is True).
+                and for each window, the possible window mutants are [gcta], [cctc], etc... such that no base remains at its original position(only_different_bases is True).
 
-                so, a possible version of sequence is:
+                so, a possible version of the sequence is:
                                 CHANGE
                         --> atcgatcgatcgatcgatcgatcgatcgatcgatcgatcgatcg
                                 |--|
                                 gcta
 
-                so, each versions of the sequence is enterely defines by a tuple of mutations. In the previous cas:
+                so, each version of the sequence is entirely defined by a tuple of mutations. In the previous case:
                         --> (">p.5.a>t", ">p.6.t>c", ...)
         """
         
@@ -202,12 +202,12 @@ class PermutationFunctions:
             seq = sequence[i:i+window]
             right_seq = sequence[i+window:]
 
-            permutations_seq = itertools.product(seq, repeat=window)
+            mutant_sequences = itertools.product(seq, repeat=window)
 
-            for p in permutations_seq:
+            for p in mutant_sequences:
                 perm = "".join(p)
                 if (
-                    all(seq[k] != perm[k] for k in range(len(perm))) # Checks if any bases are similar to those in the original sequence at the same location.
+                    all(seq[k] != perm[k] for k in range(len(perm))) # Ensures that no base remains unchanged at its original position.
                     or (not only_different_bases)
                     ):
                     new_sequence = left_seq + perm + right_seq
