@@ -165,7 +165,7 @@ class RandomAlterationFonctions:
 
 class PermutationFunctions:
 
-    def permutations(sequence: genome, 
+    def enumerate_window_mutants(sequence: genome, 
                       start: int, end: int, step: int,
                       window: int=3, 
                       only_different_bases: bool=True)-> dict[tuple[mut, ...], genome]:
@@ -198,9 +198,9 @@ class PermutationFunctions:
         output: dict[tuple[mut, ...], genome] = {}
 
         for i in range(start, end - window +1, step):
-            left_seq = "".join([sequence[k] for k in range(i)])
-            seq = "".join([sequence[k] for k in range(i, i+window)])
-            right_seq = "".join([sequence[k] for k in range(i+window, len(seq)-1)])
+            left_seq = sequence[:i]
+            seq = sequence[i:i+window]
+            right_seq = sequence[i+window:]
 
             permutations_seq = itertools.product(seq, repeat=window)
 
@@ -210,6 +210,7 @@ class PermutationFunctions:
                     all(seq[k] != perm[k] for k in range(len(perm))) # Checks if any bases are similar to those in the original sequence at the same location.
                     or (not only_different_bases)
                     ):
-                    output[tuple_mutation(old=seq, new=perm)] = left_seq + perm + right_seq
+                    new_sequence = left_seq + perm + right_seq
+                    output[tuple_mutation(old=sequence, new=new_sequence)] = new_sequence
 
         return output
