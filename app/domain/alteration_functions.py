@@ -13,7 +13,7 @@ class AlterationFunctionsByIndex:
     They return the new sequence.
     """
 
-    def place_pattern(sequence: genome, 
+    def place_pattern(sequence: genome, # insert_patern ?
                             pattern :str, 
                             index :int,
                             length : str | int = 0 )-> genome:
@@ -50,7 +50,7 @@ class AlterationFunctionsByIndex:
         """
         return
 
-    def copy_cut_paste(sequence: genome,
+    def copy_cut_paste(sequence: genome, # séparer en plusieurs fonctions
                      start_cc: int,
                      end_cc: int,
                      index_paste: int,
@@ -151,7 +151,7 @@ class RandomAlterationFunctions:
     using probability distributions defined by the ProbaLawsFunctions class.
     """
 
-    def base_by_base(sequence: genome, 
+    def mutate_independently(sequence: genome, 
                      prob_mat: MutationMatrix
                    )-> genome:
         """
@@ -165,7 +165,7 @@ class RandomAlterationFunctions:
 
 class WindowMutationFunctions:
 
-    def enumerate_window_mutants(sequence: genome, 
+    def enumerate_window_mutants(sequence: genome, #attention mémoire
                       start: int, end: int, step: int,
                       window: int = 3, 
                       only_different_bases: bool = True)-> dict[tuple[mut, ...], genome]:
