@@ -6,7 +6,7 @@ import re
 from app.schemas.typing import mut, genome, JSON
 from app.domain.genomic_calculation import calcul_y
 from app.test.global_var import GlobalVar
-from app.schemas.genomic_variants_schema import GeneticVariant
+from app.schemas.genetic_variants_schema import GeneticVariant
 from app.errors.errors import InvalidMutationSyntax
 
 class GenomicServices:
