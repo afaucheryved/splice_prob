@@ -7,7 +7,7 @@ from app.services.general_services import ProbaServices, IsValide
 router = APIRouter()
 
 @router.post("/GetDeltaScore/")
-async def return_Delta_proba_json(gv: GeneticVariant):
+async def return_delta_proba_json(gv: GeneticVariant):
     """
     the 'sequence' is not altered by the mutation. We create the altered one later in order to calulate the delat score
     'Delta score' means the difference between the acceptor and donor score before and after the mutation
