@@ -10,7 +10,7 @@ from app.services.general_services import ProbaServices, IsValide
 router = APIRouter()
 
 @router.post("/GetSimpleProb/")
-async def return_propa_json(gv: GeneticVariant):
+async def return_simple_proba_json(gv: GeneticVariant):
     """
     return the JSON of proba
     """

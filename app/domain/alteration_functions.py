@@ -3,14 +3,14 @@
 #local import
 from app.schemas.typing import *
 
-class PatternAlterartionFonctions:
+class GeneralterartionFonctions:
 
     """
     this class of functions is about to work on patterns' atcg sequence.
     they return the the sequence
     """
 
-    def remplace_pattern_to(sequence: genome, 
+    def remplace_pattern(sequence: genome, 
                             olde_pattern: str | None=None, 
                             new_pattern :str | None=None, 
                             index_start : str | None=None, 
@@ -49,34 +49,22 @@ class PatternAlterartionFonctions:
                 --> "...atatatatatcg_NEW_PATTERN_gcatatatatatat..."
         """
         return
-    def cc_and_past(sequence: genome,
+    def cc_past(sequence: genome,
                      start_cc_index: int,
                      end_cc_index: int,
                      start_past_index: int,
                      end_past_index: int,
                      mode: str="copy")-> genome:
         """
-        cut (or copy) and past en sequence
+        cut (or copy) and past a sequence
         """
-
-class FullAlterationFonctions:
-
-    """
-    alteration on the entire sequence
-    """
-
-    def inversion(sequence: genome)-> genome:
-        """
-        inverse sequence order
-        """
-        return
 
 class NewSequenceFonctions:
 
     """
     creating a sequence from scratch
     """
-    def reapeat(pattern: str, nbr: int, 
+    def repeat(pattern: str, nbr: int, 
                 start_pattern: str="", 
                 end_pattern: str="")-> genome:
         """
@@ -84,7 +72,7 @@ class NewSequenceFonctions:
         """
         return
     
-    def merge(sequensess :list[str])-> genome:
+    def merge(sequensess :list[genome])-> genome:
         """
         return merged sequences
         """
