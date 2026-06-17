@@ -2,8 +2,8 @@
 from fastapi import FastAPI
 
 #local importation :
-from app.routeur.delta_router import router as delta_router
-from app.routeur.simple_router import router as simple_router
+from app.router.delta_router import router as delta_router
+from app.router.simple_router import router as simple_router
 
 """
 documentation interactive : http://127.0.0.1:8000/docs
