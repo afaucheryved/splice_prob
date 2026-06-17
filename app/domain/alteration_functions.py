@@ -3,8 +3,8 @@ import itertools
 
 #local import
 from app.schemas.typing import *
-from proba_laws_functions import ProbaLawsFunctions
-from genomic_calculation import tuple_mutation
+from app.domain.proba_laws_functions import ProbaLawsFunctions
+from app.domain.genomic_calculation import tuple_mutation
 
 class AlterartionFunctionsByIndex:
 
@@ -16,7 +16,7 @@ class AlterartionFunctionsByIndex:
     def place_pattern(sequence: genome, 
                             pattern :str, 
                             index :int,
-                            lenght :int=0 | str)-> genome:
+                            lenght : str | int=0 )-> genome:
         """
         Place an actg pattern at an index a over a specified length of the sequence (instead of another one if lenght != 0).
         If length = ":", then the length is the distance from the index to the end of the sequence. 
@@ -166,7 +166,7 @@ class RandomAlterationFonctions:
 class PermutationFunctions:
 
     def permutations(sequence: genome, 
-                      step: int, start: int, end: int, 
+                      start: int, end: int, step: int,
                       window: int=3, 
                       only_different_bases: bool=True)-> dict[tuple[mut, ...], genome]:
         """
@@ -198,9 +198,9 @@ class PermutationFunctions:
         output: dict[tuple[mut, ...], genome] = {}
 
         for i in range(start, end - window +1, step):
-            left_seq,    = sequence[:,i]
-            seq = sequence[i, i+window]
-            right_seq = sequence[:,i]
+            left_seq = "".join([sequence[k] for k in range(i)])
+            seq = "".join([sequence[k] for k in range(i, i+window)])
+            right_seq = "".join([sequence[k] for k in range(i+window, len(seq)-1)])
 
             permutations_seq = itertools.product(seq, repeat=window)
 

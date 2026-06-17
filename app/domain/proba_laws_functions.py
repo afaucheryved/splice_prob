@@ -1,5 +1,5 @@
 #local import
-from schemas.typing import *
+from app.schemas.typing import *
 
 class ProbaLawsFunctions :
     """

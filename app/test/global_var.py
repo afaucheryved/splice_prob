@@ -18,4 +18,3 @@ class GlobalVar:
 
     #bases manipulation
     BASES: str="ACGT"
-    BASE_TO_IDX: dict[str, int]= {b: i for i, b in enumerate(BASES)}
