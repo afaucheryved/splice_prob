@@ -170,9 +170,9 @@ class PermutationFunctions:
                       window: int=3, 
                       only_different_bases: bool=True)-> dict[tuple[mut, ...], genome]:
         """
-        Returns the dictionary of versions of the sequence, each containing a permutation: 
+        Returns the dictionary of versions of the sequence, each containing a window mutant: 
         1: of a specific window position; 
-        2: of a version of a possible permutation of that window.
+        2: of a version of a possible window mutant of that window.
 
         Example:
 
@@ -183,7 +183,7 @@ class PermutationFunctions:
                 so the windows positions [] are, between 'start' and 'end' :
                         ...[atcg][atcg][atcg][atcg]...
 
-                and for each  window, the possibles permutations are [gcta], [cctc], etc... without a base in the same location as the original sequence (only_different_bases is True).
+                and for each  window, the possibles window mutant are [gcta], [cctc], etc... without a base in the same location as the original sequence (only_different_bases is True).
 
                 so, a possible version of sequence is:
                                 CHANGE

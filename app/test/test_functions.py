@@ -25,6 +25,6 @@ start, end, step = 0, len(seq), 4
 
 @print_dic_lisible
 def f():
-    return PermutationFunctions.permutations(seq, start, end, step, window)
+    return PermutationFunctions.enumerate_window_mutants(seq, start, end, step, window)
 
 f()
