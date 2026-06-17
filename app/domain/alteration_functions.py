@@ -2,6 +2,7 @@
 
 #local import
 from app.schemas.typing import *
+from proba_laws_functions import ProbaLawsFunctions
 
 class AlterartionFunctionsByIndex:
 
@@ -16,7 +17,7 @@ class AlterartionFunctionsByIndex:
                             lenght :int=0 | str)-> genome:
         """
         Place an actg pattern at an index a over a specified length of the sequence (instead of another one if lenght != 0).
-        If 'length' = ":", then the length is the distance from the index to the end of the sequence. 
+        If length = ":", then the length is the distance from the index to the end of the sequence. 
         Example:
                 pattern = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", lenght = 16
 
@@ -37,7 +38,7 @@ class AlterartionFunctionsByIndex:
         """
         Delet the bases beteen the position 'start' and 'end'.
         You can use 'lenght' parametter instead of 'end'.
-        If 'length' = ":", then the length is the distance from the index to the end of the sequence.
+        If length = ":", then the length is the distance from the index to the end of the sequence.
         Example:
                         
                                         DELETED
@@ -143,6 +144,18 @@ class NewSequenceFunctions:
 
 class RandomAlterationFonctions:
     """
-    returns randomly mutated atgc sequences following user-defined probability distributions,
+    Returns randomly mutated atgc sequences following user-defined probability distributions,
     via other functions of the 'ProbaLaws' class.
     """
+
+    def base_by_base(sequence: genome, 
+                     prob_mat: MutationMatrix
+                   )-> genome:
+        """
+        applies a probability law to each basis, which causes it to mutate or not depending on the probability matrix
+
+        Example:
+
+            If proba_mat[0][1] = 0.01, so a "a" have 1% chance to become a "c"
+        """
+        return 

@@ -9,6 +9,13 @@ class GlobalVar:
     """
     Contains global variabvles
     """
+    #parameters
     CONTEXT: int= 10000
-    PATH_FILE_FA: str="" # read
+
+    #paths
+    PATH_FILE_FA: path="" # read
     PATH_FILE_JSON: path="test/proba.json" # write
+
+    #bases manipulation
+    BASES: str="ACGT"
+    BASE_TO_IDX: dict[str, int]= {b: i for i, b in enumerate(BASES)}

@@ -3,7 +3,7 @@ import traceback
 from fastapi import APIRouter
 
 #local importation
-from app.schemas.genetic_variants_schema import GeneticVariant
+from app.schemas.general_schema import GeneticVariant
 from app.schemas.typing import JSON
 from app.services.general_services import ProbaServices, IsValide
 
