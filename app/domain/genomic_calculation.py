@@ -8,7 +8,9 @@ from pkg_resources import resource_filename
 import time as t
 
 #local importation
-from app.schemas.typing import genome
+from app.schemas.typing import genome, mut
+
+#scpliceia
 
 def one_hot_encoder(dico_data: dict[str, genome], context: int =10000)->np.ndarray[np.float32]:
         """
@@ -46,3 +48,20 @@ def calcul_y(dico_data: dict[str, genome], CONTEXT: int = 10000)->tuple[list[int
     models = [load_model(resource_filename('spliceai', x)) for x in paths]
     y = np.mean([models[m].predict(x, batch_size=len(dico_data)) for m in range(5)], axis=0)[0]
     return y
+
+# deduce_mutation
+
+def tuple_mutation(old: genome, new: genome)->tuple[mut]:
+    """
+    deduces the tuple of mutations that were used to create the new sequence, 
+    from the old one, with the notation of a mutation that is:
+    ">p.A.B>C" : the base number A, which was a B become a C
+    """
+    if len(old) != len(new):
+        raise ValueError("genomes must have the same length")
+
+    return tuple(
+        f">p.{i}.{b0}>{b1}"
+        for i, (b0, b1) in enumerate(zip(old, new), start=1)
+        if b0 != b1
+    )

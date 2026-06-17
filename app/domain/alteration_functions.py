@@ -1,8 +1,10 @@
 #general import
+import itertools
 
 #local import
 from app.schemas.typing import *
 from proba_laws_functions import ProbaLawsFunctions
+from genomic_calculation import tuple_mutation
 
 class AlterartionFunctionsByIndex:
 
@@ -65,6 +67,7 @@ class AlterartionFunctionsByIndex:
                         
 
         """
+        return
 
 class AlterartionFunctionsByPattern:
 
@@ -159,3 +162,54 @@ class RandomAlterationFonctions:
             If proba_mat[0][1] = 0.01, so a "a" have 1% chance to become a "c"
         """
         return 
+
+class PermutationFunctions:
+
+    def permutations(sequence: genome, 
+                      step: int, start: int, end: int, 
+                      window: int=3, 
+                      only_different_bases: bool=True)-> dict[tuple[mut, ...], genome]:
+        """
+        Returns the dictionary of versions of the sequence, each containing a permutation: 
+        1: of a specific window position; 
+        2: of a version of a possible permutation of that window.
+
+        Example:
+
+                sequence = "atcgatcgatcgatcgatcgatcgatcgatcgatcgatcgatcg",
+                step = 3, start = 0, end = len(sequence)
+                window = 4
+
+                so the windows positions [] are, between 'start' and 'end' :
+                        ...[atcg][atcg][atcg][atcg]...
+
+                and for each  window, the possibles permutations are [gcta], [cctc], etc... without a base in the same location as the original sequence (only_different_bases is True).
+
+                so, a possible version of sequence is:
+                                CHANGE
+                        --> atcgatcgatcgatcgatcgatcgatcgatcgatcgatcgatcg
+                                |--|
+                                gcta
+
+                so, each versions of the sequence is enterely defines by a tuple of mutations. In the previous cas:
+                        --> (">p.5.a>t", ">p.6.t>c", ...)
+        """
+        
+        output: dict[tuple[mut, ...], genome] = {}
+
+        for i in range(start, end - window +1, step):
+            left_seq,    = sequence[:,i]
+            seq = sequence[i, i+window]
+            right_seq = sequence[:,i]
+
+            permutations_seq = itertools.product(seq, repeat=window)
+
+            for p in permutations_seq:
+                perm = "".join(p)
+                if (
+                    all(seq[k] != perm[k] for k in range(len(perm))) # Checks if any bases are similar to those in the original sequence at the same location.
+                    or (not only_different_bases)
+                    ):
+                    output[tuple_mutation(old=seq, new=perm)] = left_seq + perm + right_seq
+
+        return output
