@@ -285,7 +285,8 @@ class WindowMutationFunctions:
                       start: int, end: int, step: int,
                       window: int = 3, 
                       only_different_bases: bool = True, 
-                      max_char: int = 1000000)-> dict[tuple[mut, ...], genome]:
+                      max_char: int = 1_000_000,
+                      not_return_muted_sequence: bool = False)-> dict[tuple[mut, ...], genome]:
         """
         Returns the dictionary of versions of the sequence
         1: of a specific window position; 
@@ -312,27 +313,29 @@ class WindowMutationFunctions:
                         --> (">p.5.a>g", ">p.6.t>c", ...)
         Possible improvement: return a `window_mutats` object that stores the base sequence and the set of mutations, and—by design—returns the entire desired mutated sequence upon request.
         """
-        
-        output: dict[tuple[mut, ...], genome] = {}
+        output: dict[tuple, str] = {}
         nbr_char = 0
 
-        for i in range(start, end - window +1, step):
+        for i in range(start, end - window + 1, step):
             left_seq = sequence[:i]
-            seq = sequence[i:i+window]
-            right_seq = sequence[i+window:]
+            seq = sequence[i:i + window]
+            right_seq = sequence[i + window:]
 
-            mutant_sequences = itertools.product(seq, repeat=window)
+            # Iterate over every possible base combination (a, t, c, g), not just
+            # the bases already present in the current window.
+            mutant_sequences = itertools.product("ATCG", repeat=window)
 
             for p in mutant_sequences:
                 perm = "".join(p)
                 if (
-                    all(seq[k] != perm[k] for k in range(len(perm))) # Ensures that no base remains unchanged at its original position.
+                    all(seq[k] != perm[k] for k in range(len(perm)))  # Ensures that no base remains unchanged at its original position.
                     or (not only_different_bases)
-                    ):
-                    new_sequence = left_seq + perm + right_seq
+                ):
+                    new_sequence = "" if not_return_muted_sequence else left_seq + perm + right_seq
                     output[tuple_mutation(old=sequence, new=new_sequence)] = new_sequence
-                    vnbr_char+=len(new_sequence)
+                    nbr_char += len(new_sequence)
+
                     if nbr_char >= max_char:
-                        break
+                        return output
 
         return output

@@ -17,4 +17,4 @@ class GlobalVar:
     PATH_FILE_JSON: path="test/proba.json" # write
 
     #bases manipulation
-    BASES: str="ACGT"
+    BASES: str="acgt"
