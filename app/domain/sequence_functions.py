@@ -323,7 +323,7 @@ class WindowMutationFunctions:
 
             # Iterate over every possible base combination (a, t, c, g), not just
             # the bases already present in the current window.
-            mutant_sequences = itertools.product("ATCG", repeat=window)
+            mutant_sequences = itertools.product(GlobalVar.BASES, repeat=window)
 
             for p in mutant_sequences:
                 perm = "".join(p)
@@ -332,8 +332,9 @@ class WindowMutationFunctions:
                     or (not only_different_bases)
                 ):
                     new_sequence = "" if not_return_muted_sequence else left_seq + perm + right_seq
-                    output[tuple_mutation(old=sequence, new=new_sequence)] = new_sequence
-                    nbr_char += len(new_sequence)
+                    t_m = tuple_mutation(old=sequence, new=new_sequence)
+                    output[t_m] = new_sequence
+                    nbr_char += len(perm) if not_return_muted_sequence else len(new_sequence)
 
                     if nbr_char >= max_char:
                         return output
