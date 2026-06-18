@@ -2,7 +2,7 @@
 from functools import wraps
 
 #local import
-from app.domain.alteration_functions import PermutationFunctions
+from app.domain.sequence_functions import WindowMutationFunctions
 
 # tool test
 def print_dic_lisible(func):
@@ -17,14 +17,16 @@ def print_dic_lisible(func):
 
     return wrapper
 
+# var test
 seq = "atcgatcg"
 
 window = 4
 
 start, end, step = 0, len(seq), 4
 
+# function test
 @print_dic_lisible
 def f():
-    return PermutationFunctions.enumerate_window_mutants(seq, start, end, step, window)
+    return WindowMutationFunctions.enumerate_window_mutants(seq, start, end, step, window)
 
 f()

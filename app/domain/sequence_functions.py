@@ -13,7 +13,7 @@ class AlterationFunctionsByIndex:
     They return the new sequence.
     """
 
-    def place_pattern(sequence: genome, # insert_patern ?
+    def insert_pattern(sequence: genome,
                             pattern :str, 
                             index :int,
                             length : str | int = 0 )-> genome:
@@ -50,12 +50,28 @@ class AlterationFunctionsByIndex:
         """
         return
 
-    def copy_cut_paste(sequence: genome, # séparer en plusieurs fonctions
+    def move_pattern(sequence: genome, 
                      start_cc: int,
                      end_cc: int,
                      index_paste: int,
-                     length_paste: int = 0,
+                     length_paste: str | int = 0,
                      mode: str = "cut")-> genome:
+        """
+        Cut (or copy) and paste a sequence.
+        Example:
+                        
+                         CUT                                    PASTE
+            -> ...atcgatcgatcgatcgatcgatcgatcgatcgatcgatcgatcgatcgatcgatcgatcg...
+                    |-----------|                      |---------------------|
+                 start_cc     end_cc               index_paste   (length_past)                                                  
+                        
+
+        """
+        return
+
+    def copy_pattern(sequence: genome, 
+                     start_cc: int,
+                     end_cc: int)-> genome:
         """
         Cut (or copy) and paste a sequence.
         Example:
