@@ -2,7 +2,7 @@
 from fastapi import APIRouter
 from app.schemas.general_schema import GeneticVariant
 from app.schemas.typing import JSON
-from app.services.general_services import ProbaServices, IsValide
+from app.services.general_services import ProbaServices, IsValid
 
 router = APIRouter()
 
@@ -14,6 +14,6 @@ async def return_delta_proba_json(gv: GeneticVariant):
     mutation syntaxe : " >p.8.a>c " : means the 8th base become a "c" instead of an "a".
     Warning : a mutation at the position 1 is about the FIRST base.
     """
-    if IsValide.mutations(gv.mutations) and IsValide.sequence(gv.sequence):
+    if IsValid.mutations(gv.mutations) and IsValid.sequence(gv.sequence):
         result = ProbaServices.return_proba_delta(gv)
     return result

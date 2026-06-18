@@ -4,7 +4,7 @@ import re
 
 #local importation
 from app.schemas.typing import mut, genome, JSON
-from app.domain.genomic_calculation import calcul_y
+from app.domain.spliceia_calculation import calcul_y
 from app.test.global_var import GlobalVar
 from app.schemas.general_schema import GeneticVariant
 from app.errors.errors import InvalidMutationSyntax
@@ -119,22 +119,4 @@ class ProbaServices :
         delta_score_result["altered sequence"] = altered_seq
         delta_score_result["name"] = gv.name
         return delta_score_result
-
-class IsValide:
-
-    def mutations(mutations: list[str]) -> bool:
-        for s in mutations:
-            """
-            verifies a mutation syntaxe
-            """
-            if not bool(re.match(r"^>p\.\d+\.[atgc]>[atgc]$", s)):
-                raise InvalidMutationSyntax(
-                    f"Mutation '{s}' does not match syntax: >p.<pos>.<ref>><alt>"
-                )
-        return True
     
-    def sequence(sequence: str) -> bool:
-        """
-        Verifies the sequence syntaxe
-        """
-        return bool(re.match(r"^[ACGTacgt]+$", sequence))

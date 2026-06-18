@@ -4,7 +4,7 @@ import itertools
 #local import
 from app.schemas.typing import *
 from app.domain.proba_laws_functions import ProbaLawsFunctions
-from app.domain.genomic_calculation import tuple_mutation
+from app.domain.spliceia_calculation import tuple_mutation
 
 class AlterationFunctionsByIndex:
 
@@ -181,10 +181,11 @@ class RandomAlterationFunctions:
 
 class WindowMutationFunctions:
 
-    def enumerate_window_mutants(sequence: genome, #attention mémoire
+    def enumerate_window_mutants(sequence: genome,
                       start: int, end: int, step: int,
                       window: int = 3, 
-                      only_different_bases: bool = True)-> dict[tuple[mut, ...], genome]:
+                      only_different_bases: bool = True, 
+                      max_char: int = 1000000)-> dict[tuple[mut, ...], genome]:
         """
         Returns the dictionary of versions of the sequence
         1: of a specific window position; 
@@ -208,10 +209,12 @@ class WindowMutationFunctions:
                                 gcta
 
                 so, each version of the sequence is entirely defined by a tuple of mutations. In the previous case:
-                        --> (">p.5.a>t", ">p.6.t>c", ...)
+                        --> (">p.5.a>g", ">p.6.t>c", ...)
+        Possible improvement: return a `window_mutats` object that stores the base sequence and the set of mutations, and—by design—returns the entire desired mutated sequence upon request.
         """
         
         output: dict[tuple[mut, ...], genome] = {}
+        nbr_char = 0
 
         for i in range(start, end - window +1, step):
             left_seq = sequence[:i]
@@ -228,5 +231,8 @@ class WindowMutationFunctions:
                     ):
                     new_sequence = left_seq + perm + right_seq
                     output[tuple_mutation(old=sequence, new=new_sequence)] = new_sequence
+                    vnbr_char+=len(new_sequence)
+                    if nbr_char >= max_char:
+                        break
 
         return output
