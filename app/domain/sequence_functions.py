@@ -1,10 +1,15 @@
 #general import
 import itertools
+import re
+import numpy as np
+import numpy.typing as npt
+import random
 
 #local import
 from app.schemas.typing import *
 from app.domain.proba_laws_functions import ProbaLawsFunctions
 from app.domain.spliceia_calculation import tuple_mutation
+from app.test.global_var import GlobalVar
 
 class AlterationFunctionsByIndex:
 
@@ -31,7 +36,21 @@ class AlterationFunctionsByIndex:
                                     |                            |____
                                     |aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa |
         """
-        return 
+            # Determine the replacement length.
+        if length == ":":
+            replace_length = len(sequence) - index
+        elif length == 0:
+            replace_length = len(pattern)
+        else:
+            replace_length = length
+
+        # Truncate or pad the pattern so that it has a length of exactly replace_length.
+        if len(pattern) >= replace_length:
+            insert = pattern[:replace_length]
+        else:
+            insert = pattern + sequence[index + len(pattern):index + replace_length]
+
+        return sequence[:index] + insert + sequence[index + replace_length:]
     
     def delete_pattern(sequence: genome, 
                        start : int, 
@@ -48,16 +67,24 @@ class AlterationFunctionsByIndex:
                                     |----------------|
                                    start  (length)  end
         """
-        return
+        if length is not None:
+            if length == ":":
+                end = len(sequence)
+            else:
+                end = start + length
+        elif end is None:
+            end = len(sequence)
 
-    def move_pattern(sequence: genome, 
+        return sequence[:start] + sequence[end:]
+
+    def move_pattern(self, sequence: genome, 
                      start_cc: int,
                      end_cc: int,
                      index_paste: int,
-                     length_paste: str | int = 0,
-                     mode: str = "cut")-> genome:
+                     length_paste: str | int = 0)-> genome:
         """
-        Cut (or copy) and paste a sequence.
+        Cut and paste a sequence.
+        If length = ":", then the length is the distance from the index to the end of the sequence.
         Example:
                         
                          CUT                                    PASTE
@@ -67,23 +94,34 @@ class AlterationFunctionsByIndex:
                         
 
         """
-        return
+        pattern = sequence[start_cc:end_cc]
+        new_sequence = self.delete_pattern(sequence, start_cc, end_cc)
 
-    def copy_pattern(sequence: genome, 
+        # Adjusts index_paste if the paste point was located after the deleted area.
+        cut_length = end_cc - start_cc
+        if index_paste > start_cc:
+            index_paste -= cut_length
+
+        return self.insert_pattern(new_sequence, pattern, index_paste, length_paste)
+
+    def copy_past_pattern(self, sequence: genome, 
                      start_cc: int,
-                     end_cc: int)-> genome:
+                     end_cc: int, 
+                     index_paste: int,
+                     length_paste: str | int = 0)-> genome:
         """
-        Cut (or copy) and paste a sequence.
+        Copy and paste a sequence.
         Example:
                         
-                      COPY / CUT                                PASTE
+                        COPY                                    PASTE
             -> ...atcgatcgatcgatcgatcgatcgatcgatcgatcgatcgatcgatcgatcgatcgatcg...
                     |-----------|                      |---------------------|
                  start_cc     end_cc               index_paste   (length_past)                                                  
                         
 
         """
-        return
+        pattern = sequence[start_cc:end_cc]
+        return self.insert_pattern(sequence, pattern, index_paste, length_paste)
 
 class AlterationFunctionsByPattern:
 
@@ -92,6 +130,44 @@ class AlterationFunctionsByPattern:
     The entire input sequence is processed by the functions.
     They return the new sequence.
     """
+
+    @staticmethod
+    def _pattern_to_regex(pattern: str) -> str:
+        """
+        Convert a pattern containing wildcards into a regex pattern.
+        "_" matches exactly one ATCG base.
+        "%(n)" matches any sequence of up to n ATCG bases.
+        "%" alone (no parentheses) matches a sequence of any length (0 to infinity).
+        """
+        regex_parts = []
+        i = 0
+        while i < len(pattern):
+            char = pattern[i]
+
+            if char == "_":
+                # Matches exactly one base
+                regex_parts.append("[ATCGatcg]")
+                i += 1
+
+            elif char == "%":
+                # Check for "%(n)" syntax
+                match = re.match(r"%\((\d+)\)", pattern[i:])
+                if match:
+                    n = match.group(1)
+                    # Matches up to n bases (0 to n)
+                    regex_parts.append(f"[ATCGatcg]{{0,{n}}}")
+                    i += match.end()
+                else:
+                    # Bare "%" -> matches a sequence of any length
+                    regex_parts.append("[ATCGatcg]*")
+                    i += 1
+
+            else:
+                # Literal base, escaped for safety
+                regex_parts.append(re.escape(char))
+                i += 1
+
+        return "".join(regex_parts)
 
     def replace_pattern(sequence: genome, 
                             old: str, 
@@ -110,7 +186,8 @@ class AlterationFunctionsByPattern:
                                 
 
         """
-        return 
+        regex_pattern = AlterationFunctionsByPattern._pattern_to_regex(old)
+        return re.sub(regex_pattern, new, sequence)
     
     def delete_pattern(sequence: genome, 
                        pattern: str, 
@@ -121,14 +198,12 @@ class AlterationFunctionsByPattern:
         Example:
 
             pattern = "cc_c"
-                               DELETEEeE                      DELETEEe
+                               DELETE                     DELETE
             -> ...atcgatcgatcgatccccgatcgatcgatcgatcgatcgatcctcgatcgatcgatcgatcgatcg...
-                                |--|                       |--|
-                                                     
-                                
-
+                                |--|                       |--|                                                    
         """
-        return
+        regex_pattern = AlterationFunctionsByPattern._pattern_to_regex(pattern)
+        return re.sub(regex_pattern, "", sequence)
 
 class SequenceFactory:
 
@@ -147,7 +222,7 @@ class SequenceFactory:
             --> aaaaatcgatcgatcgatcgatcgatcgatcgatcgatcgatcgcccc
             <start> |              <loop>                   | <end>
         """
-        return
+        return start_pattern + (pattern * nbr) + end_pattern
     
     def merge(sequences: list[genome])-> genome:
         """
@@ -159,13 +234,34 @@ class SequenceFactory:
             
             --> aaaattttccccgggg
         """
-        return
+        return "".join(sequences)
 
 class RandomAlterationFunctions:
     """
     Returns randomly mutated ATCG sequences following user-defined probability distributions,
     using probability distributions defined by the ProbaLawsFunctions class.
     """
+    @staticmethod
+    def proba_law(base: str, prob_mat: MutationMatrix) -> str:
+        """
+        Randomly mutate a single base according to the mutation probability matrix.
+
+        Example:
+
+            If prob_mat[0][1] = 0.01 (A -> C), then calling proba_law("A", prob_mat)
+            has a 1% chance of returning "C".
+        """
+        # Find the row index corresponding to the input base
+        base_index = GlobalVar.BASES.index(base.upper())
+
+        # Get the probability distribution for this base (row of the matrix)
+        probabilities = prob_mat[base_index]
+
+        # Pick a new base according to the probability distribution
+        new_base = random.choices(GlobalVar.BASES, weights=probabilities, k=1)[0]
+
+        # Preserve the original case (lower/upper) of the input base
+        return new_base.lower() if base.islower() else new_base
 
     def mutate_independently(sequence: genome, 
                      prob_mat: MutationMatrix
@@ -177,7 +273,11 @@ class RandomAlterationFunctions:
 
             If prob_mat[0][1] = 0.01, then an "A" has a 1% chance of becoming a "C".
         """
-        return 
+        return "".join(
+            RandomAlterationFunctions.proba_law(base, prob_mat)
+            for base in sequence
+        )
+
 
 class WindowMutationFunctions:
 
